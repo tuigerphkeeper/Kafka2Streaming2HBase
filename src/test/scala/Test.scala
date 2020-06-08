@@ -1,7 +1,6 @@
 import com.own.hydropower.common_params.Comm_Params
+import com.own.hydropower.data2dbs.DataFromKafka
 
 object Test extends App {
-  Comm_Params.initConfig()
-
-  println(Comm_Params.hbasePath)
+  // DataFromKafka.getConsumptionData()
 }

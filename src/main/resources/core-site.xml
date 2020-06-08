@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://master.hadoop:8020</value>
+        <value>hdfs://lyj1.bigdata:8020</value>
     </property>
     <property>
         <name>fs.hdfs.impl</name>

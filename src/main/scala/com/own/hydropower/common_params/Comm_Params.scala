@@ -9,27 +9,27 @@ object Comm_Params {
 
   private val log = LogManager.getLogger(Comm_Params.getClass)
 
-  var hdfsPath: String = null
-  var zookeeper: String = null // kafkaZookeeper集群地址
-  var topic: String = null // kafkaTopic
-  var group: String = null // group_1
-  var brokers: String = null // Kafka节点
-  var sparkStreamMaster: String = null // stream运行模式
-  var sparkStreamName: String = null // stream任务名称
-  var sparkSqlMaster: String = null // sql运行模式
-  var sparkSqlName: String = null
-  var hbaseQuorum: String = null // HBase_IP
-  var hbasePort: String = null // HBase端口
-  var hbasePath: String = null // HBase在zk上的路径
-  var kafka_hosts: String = null // kafka_leader
-  var kafka_port: String = null
-  var tableName: String = null
-  var family: String = null
-  var column1: String = null
-  var column2: String = null
-  var column3: String = null
-  var column4: String = null
-  var column5: String = null
+  var hdfsPath: String = _
+  var zookeeper: String = _ // kafkaZookeeper集群地址
+  var topic: String = _ // kafkaTopic
+  var group: String = _ // group_1
+  var brokers: String = _ // Kafka节点
+  var sparkStreamMaster: String = _ // stream运行模式
+  var sparkStreamName: String = _ // stream任务名称
+  var sparkSqlMaster: String = _ // sql运行模式
+  var sparkSqlName: String = _
+  var hbaseQuorum: String = _ // HBase_IP
+  var hbasePort: String = _ // HBase端口
+  var hbasePath: String = _ // HBase在zk上的路径
+  var kafka_hosts: String = _ // kafka_leader
+  var kafka_port: String = _
+  var tableName: String = _
+  var family: String = _
+  var column1: String = _
+  var column2: String = _
+  var column3: String = _
+  var column4: String = _
+  var column5: String = _
 
   /**
    * 初始化所有的通用信息
@@ -45,10 +45,8 @@ object Comm_Params {
   private def readCommons() {
     val pp = new Properties()
     try {
-      PropertyConfigurator.configure(
-        "D:\\IdeaProjects\\BigData_Spark\\src\\main\\resources\\\\log4j.properties");
-      pp.load(new FileInputStream(
-        "D:\\IdeaProjects\\BigData_Spark\\src\\main\\resources\\comm_params.properties"));
+      PropertyConfigurator.configure("/usr/local/projects/sparkstreaming/log4j.properties")
+      pp.load(new FileInputStream("/usr/local/projects/sparkstreaming/comm_params.properties"))
     } catch {
       case e: IOException =>
         log.error(e)
