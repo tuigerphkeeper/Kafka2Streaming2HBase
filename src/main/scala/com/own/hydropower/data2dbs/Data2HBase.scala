@@ -2,8 +2,9 @@ package com.own.hydropower.data2dbs
 
 import java.text.SimpleDateFormat
 import java.util.{Date, Properties, UUID}
+
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.hbase.client.{HTable, Put}
+import org.apache.hadoop.hbase.client.{Connection, HTable, Put}
 import org.apache.hadoop.hbase.util.Bytes
 import org.apache.hadoop.hbase.{HBaseConfiguration, TableName}
 import org.apache.log4j.LogManager
@@ -35,7 +36,6 @@ class Data2HBase(broadcast: Broadcast[Properties]) extends Serializable {
    */
   //def writeDatabase(kafkaStream: InputDStream[(String, String)], pp: Properties): Unit = {
   def writeDatabase(kafkaStream: InputDStream[(String, String)]): Unit = {
-    //@transient
 
     val time1: Long = System.currentTimeMillis()
     log.info("开始数据插入，当前时间:" + time1)
@@ -53,23 +53,23 @@ class Data2HBase(broadcast: Broadcast[Properties]) extends Serializable {
         conf.set("hbase.zookeeper.property.clientPort", pp.getProperty("port"))
         conf.set("zookeeper.znode.parent", pp.getProperty("hbasePath"))
         val myTable = new HTable(conf, TableName.valueOf(pp.getProperty("tableName")))
-        //        myTable.setAutoFlush(false, false) //关闭自动提交
-        //        myTable.setWriteBufferSize(3 * 1024 * 1024) //数据缓存大小
+        myTable.setAutoFlush(false, false) //关闭自动提交
+        myTable.setWriteBufferSize(3 * 1024 * 1024) //数据缓存大小
         partitionOfRecords.foreach(pair => {
           val arr = pair._2.replace("[{", "").replace("}]", "").trim.split(",")
           for (i <- 1 until arr.size) {
             val date: String = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(arr(0).substring(arr(0).indexOf("=") + 1).toLong)) //时间戳
             val put = new Put(Bytes.toBytes(UUID.randomUUID().toString))
-            //            put.setWriteToWAL(false)
-            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column1") getBytes(), arr(i).substring(0, arr(i).indexOf(";")).substring(0, arr(i).indexOf("=")).trim.getBytes()) //节点名称
-            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column2") getBytes(), date.substring(0, date.indexOf(" ")).getBytes()) //日期
-            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column3") getBytes(), date.substring(date.indexOf(" ") + 1).getBytes()) //时间
-            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column4") getBytes(), arr(i).substring(arr(i).indexOf("=") + 1, arr(i).indexOf(";")).trim.getBytes()) //节点数值
-            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column5") getBytes(), arr(i).substring(arr(i).indexOf(";") + 1).trim.getBytes()) //有效性
+            put.setWriteToWAL(false)
+            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column1").getBytes(), arr(i).substring(0, arr(i).indexOf(";")).substring(0, arr(i).indexOf("=")).trim.getBytes()) //节点名称
+            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column2").getBytes(), date.substring(0, date.indexOf(" ")).getBytes()) //日期
+            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column3").getBytes(), date.substring(date.indexOf(" ") + 1).getBytes()) //时间
+            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column4").getBytes(), arr(i).substring(arr(i).indexOf("=") + 1, arr(i).indexOf(";")).trim.getBytes()) //节点数值
+            put.addColumn(pp.getProperty("family").getBytes(), pp.getProperty("column5").getBytes(), arr(i).substring(arr(i).indexOf(";") + 1).trim.getBytes()) //有效性
             myTable.put(put)
           }
         })
-        //        myTable.flushCommits()
+        myTable.flushCommits()
       })
 
       val count = rdd.count()

@@ -47,6 +47,9 @@ object Comm_Params {
     try {
       PropertyConfigurator.configure("/usr/local/projects/sparkstreaming/log4j.properties")
       pp.load(new FileInputStream("/usr/local/projects/sparkstreaming/comm_params.properties"))
+
+//      PropertyConfigurator.configure("src\\main\\resources\\log4j.properties")
+//      pp.load(new FileInputStream("src\\main\\resources\\comm_params.properties"))
     } catch {
       case e: IOException =>
         log.error(e)

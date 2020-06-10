@@ -24,7 +24,7 @@ object SendData {
     val time1 = System.currentTimeMillis
     for (i <- 0 to 1000000) {
       producer.send(new ProducerRecord("structured", String.valueOf(i), str))
-      Thread.sleep(1)
+      Thread.sleep(100)
     }
     val time2 = System.currentTimeMillis
     val time = time2 - time1
