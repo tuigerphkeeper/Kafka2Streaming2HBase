@@ -23,21 +23,21 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
  * 从kafka获取数据
  * 利用MR程序将数据导入HBase
  */
-class DataFromKafka {
+object DataFromKafka {
 
   Comm_Params.initConfig()
-  @transient lazy val log = LogManager.getLogger(classOf[DataFromKafka])
+  @transient lazy private val log = LogManager.getLogger(DataFromKafka.getClass)
 
-  def getConsumptionData(): Unit = {
+  def main(args: Array[String]): Unit = {
     // spark配置信息
     log.info("加载spark配置...")
     val conf = new SparkConf()
       .setAppName(Comm_Params.sparkStreamName)
       .setMaster(Comm_Params.sparkStreamMaster)
 
-    val pp = new Properties
-    pp.load(new FileInputStream("/usr/local/projects/sparkstreaming/comm_params.properties"))
-//    pp.load(new FileInputStream("src\\main\\resources\\comm_params.properties"))
+    val pp = new Properties()
+    //    pp.load(new FileInputStream("/usr/local/projects/sparkstreaming/comm_params.properties"))
+    pp.load(new FileInputStream("src\\main\\resources\\comm_params.properties"))
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(5))
     val broadcast = ssc.sparkContext.broadcast(pp) // 广播变量
     // "auto.offset.reset" -> "smallest" // smallest表示从开始位置消费所有消息
@@ -82,8 +82,8 @@ class DataFromKafka {
       // 如果保存过 offset，这里更好的做法，还应该和kafka上最小的offset做对比，不然会报OutOfRange的错误
       for (i <- 0 until children) {
         // 获取zk上的存储的offset
-        val partitionOffset: String = zkClient.readData[String](s"${topicDirs.consumerOffsetDir}/${i}")
-        log.info(s"${topicDirs.consumerOffsetDir}/${i}" + "--" + partitionOffset)
+        val partitionOffset: String = zkClient.readData[String](s"${topicDirs.consumerOffsetDir}/$i")
+        log.info(s"${topicDirs.consumerOffsetDir}/$i" + "--" + partitionOffset)
         var partOffset = partitionOffset.toLong
         val tp: TopicAndPartition = TopicAndPartition(Comm_Params.topic, i)
         // 获取kafka最小的offset
@@ -94,10 +94,11 @@ class DataFromKafka {
         val latOffset: Seq[Long] = simpleConsumer.getOffsetsBefore(latestOffset).partitionErrorAndOffsets(tp).offsets
         // 通过比较从 kafka 上该 partition 的最小 offset ,当前offset和 zk 上保存的 offset，进行选择
         log.info(earOffset + "------" + latOffset + "------" + partOffset)
-        if (earOffset.length > 0 && partitionOffset.toLong < earOffset.head) {
+        if (earOffset.nonEmpty && partOffset < earOffset.head) {
           partOffset = earOffset.head
-        }
-        if (latOffset.length > 0 && partitionOffset.toLong > latOffset.head) {
+        } else if (latOffset.nonEmpty && partOffset > latOffset.head) {
+          partOffset = latOffset.head
+        } else {
           partOffset = 0
         }
         fromOffsets += (tp -> partOffset)
@@ -135,7 +136,7 @@ class DataFromKafka {
       // 得到该 rdd 对应 kafka 的消息的 offset
       offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
       rdd
-    }).map(msg => msg._2).foreachRDD { rdd =>
+    }).map(msg => msg._2).foreachRDD { _ =>
       for (o <- offsetRanges) {
         //(o.partition)
         // 获取 zookeeper 中offset 的路径

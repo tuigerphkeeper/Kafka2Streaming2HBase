@@ -135,7 +135,11 @@
             <version>0.10</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>16.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -145,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -153,6 +157,13 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google.common</pattern>
+                                    <shadedPattern>my_guava.common</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -167,7 +178,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.own.hydropower.Main</mainClass>
+                                    <mainClass>com.own.hydropower.data2dbs.DataFromKafka</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -212,15 +223,15 @@
             </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+    <!--    <reporting>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.scala-tools</groupId>-->
+    <!--                <artifactId>maven-scala-plugin</artifactId>-->
+    <!--                <configuration>-->
+    <!--                    <scalaVersion>${scala.version}</scalaVersion>-->
+    <!--                </configuration>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </reporting>-->
 </project>
