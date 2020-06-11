@@ -88,6 +88,7 @@
             <artifactId>spark-streaming-kafka-0-8_2.11</artifactId>
             <version>${spark.version}</version>
         </dependency>
+
         <!-- HBase -->
         <dependency>
             <groupId>org.apache.hbase</groupId>
@@ -111,6 +112,14 @@
             <artifactId>kafka-clients</artifactId>
             <version>2.4.1</version>
         </dependency>
+
+        <!-- Hive -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+
         <!-- log4j -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
