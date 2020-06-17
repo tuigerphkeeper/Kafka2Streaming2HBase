@@ -7,18 +7,12 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <!--        <scala.version>2.12.11</scala.version>-->
-        <!--        <hadoop.version>3.2.0</hadoop.version>-->
-        <!--        <hbase.version>2.2.3</hbase.version>-->
-        <!--        <spark.version>2.4.5</spark.version>-->
-        <!--        <log4j.version>2.13.2</log4j.version>-->
         <encoding>UTF-8</encoding>
         <scala.version>2.11.11</scala.version>
         <log4j.version>2.11.0</log4j.version>
-        <spark.version>2.3.0</spark.version>
+        <spark.version>2.3.2</spark.version>
         <hadoop.version>2.7.3</hadoop.version>
         <hbase.version>1.1.2</hbase.version>
-        <hive.version>1.2.1</hive.version>
     </properties>
 
 
@@ -105,19 +99,29 @@
             <artifactId>hbase-common</artifactId>
             <version>${hbase.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hbase.thirdparty</groupId>
+            <artifactId>hbase-shaded-miscellaneous</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase.thirdparty</groupId>
+            <artifactId>hbase-shaded-protobuf</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase.thirdparty</groupId>
+            <artifactId>hbase-shaded-netty</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+
 
         <!-- Kafka -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>2.4.1</version>
-        </dependency>
-
-        <!-- Hive -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_2.11</artifactId>
-            <version>${spark.version}</version>
         </dependency>
 
         <!-- log4j -->
@@ -187,7 +191,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.own.hydropower.data2dbs.DataFromKafka</mainClass>
+                                    <mainClass>com.own.hydropower.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
