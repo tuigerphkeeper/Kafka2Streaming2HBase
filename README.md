@@ -1,0 +1,1 @@
+SparkStreaming消费kafka，使用Kafka低阶Api，手动维护Offset保存在Zookeeper上。
